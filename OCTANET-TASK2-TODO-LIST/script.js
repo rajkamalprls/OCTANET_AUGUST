@@ -1,34 +1,37 @@
-
-var items = [];//array for to-do-s
-var count = 0;//COUNTER FOR ID
-var lister = document.querySelector('ul');//checking for completed
-var fltr = "all";//filter default value is 0(all)
-
-addItem = () => {//ADD ITEM FROM FORM FUNCTION
+var items = [];
+var count = 0;
+var lister = document.querySelector('ul');
+var fltr = "all";
+addItem = () => {
     let todo = document.getElementById("inp").value;
     let priorityGet = document.getElementById("priority").value;
+    let deadline = document.getElementById("deadline").value;
+    let label = document.getElementById("label").value;
 
-    if(todo && priorityGet){//CHECK IF NOT EMPTY
 
-        var item = {//new object to be added in array
+    if (todo && priorityGet) {
+
+        var item = {
             id: count,
             description: todo,
             priority: priorityGet,
+            deadline: deadline,
+            label: label,
             completed: false
         }
 
-        items.push(item);//push in main array
+        items.push(item);
 
-        document.getElementById("inp").value = "";//CLEAR FIELD
-
-        // console.log(items);
+        document.getElementById("inp").value = "";
+        document.getElementById("deadline").value = ""; 
+        document.getElementById("label").value = ""; 
 
         displayList(items);
 
         count++;
+    } else {
+        alert("Please fill all fields.");
     }
-    else alert("Type something");//no null values
-    
 }
 
 //DISPLAYING ALL THE TO_DO-s
@@ -41,17 +44,17 @@ displayList = list => {
 
     changeInfo(list);
 
-    list.map( elem => {
+    list.map(elem => {
         let tag = document.createElement("li");//create the li element of the list
         if (elem.completed) tag.setAttribute("class", "checked");
-        else tag.setAttribute("class","");
-        tag.setAttribute("id",elem.id);
+        else tag.setAttribute("class", "");
+        tag.setAttribute("id", elem.id);
 
         let text = document.createTextNode(elem.description);//the description of the to-do
         tag.appendChild(text);
 
         let span = document.createElement("SPAN");//the delete button
-        span.setAttribute("class","close");
+        span.setAttribute("class", "close");
         span.setAttribute("onclick", `deleteCurrent(${elem.id})`)//using onclick function
         text = document.createTextNode("X");
         span.appendChild(text);
@@ -61,6 +64,18 @@ displayList = list => {
         tag.appendChild(br);
 
         text = document.createTextNode(`Priority: ${elem.priority}`);//element priority display
+        tag.appendChild(text);
+
+        let br1 = document.createElement("br"); // Line break
+        tag.appendChild(br1);
+        
+        text = document.createTextNode(`Deadline: ${elem.deadline}`); // Display the deadline date
+        tag.appendChild(text);
+
+        let br2 = document.createElement("br"); // Line break
+        tag.appendChild(br2);
+
+        text = document.createTextNode(`label: ${elem.label}`); // Display the label
         tag.appendChild(text);
 
         span = document.createElement("SPAN");//the edit button
@@ -92,26 +107,26 @@ deleteCurrent = id => {
 
 //EDIT CURRENT TO DO WITH A POPUP
 editCurrent = id => {
-    let newVal = prompt("Add the new value of this to-do:",items[currentIndex(id)].description);
+    let newVal = prompt("Add the new value of this to-do:", items[currentIndex(id)].description);
 
-    if (newVal === null || newVal === ""){//only if not null value
+    if (newVal === null || newVal === "") {//only if not null value
         alert("No new value added. Keeping the old value.");
     }
-    else{
+    else {
         items[currentIndex(id)].description = newVal;
-        if(fltr === "all") displayList(items);
+        if (fltr === "all") displayList(items);
         else sortList(fltr);
     }
 }
 
 //SORT WITH FILTER TO NEW LIST
 sortList = pr => {
-    if(pr != "all"){//if there is a filter applied
-        const sorter = items.filter( item => item.priority === pr);
+    if (pr != "all") {//if there is a filter applied
+        const sorter = items.filter(item => item.priority === pr);
         displayList(sorter);
         fltr = pr;
     }
-    else {displayList(items); fltr = "all"}
+    else { displayList(items); fltr = "all" }
 }
 
 //CHECK/UNCHECK ITEMS WITH EVENT LISTENER
